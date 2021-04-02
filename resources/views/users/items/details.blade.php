@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('header')
-<title>{{ env('APP_NAME', $item->name . ' - details - ecommerce') }}</title>
-<meta name="keywords" content="here you can see all details about your item" >
+<title>{{ env('APP_NAME', $item->name . ' - details - zikolaravelecommerce') }}</title>
+<meta name="keywords" content="here you can see all details about your item in zikolaravelecommerce" >
 <link href="{{ asset('css/users/items/details.css') }}" rel="stylesheet">
 @endsection
 
@@ -118,7 +118,7 @@
 
     {{--#################       comments     ########################--}}
     <div id="more">
-        @include('users\items\comments')
+        @include('users.items.comments')
         
     </div>
     
@@ -130,63 +130,7 @@
 @endsection
 @section('script')
     <script>
-        //ajax jquery infinite scroll
-        function loadMore(page){
-            $.ajax({
-                type: "get",
-                url : '?page='+page,   
-                data: {
-                    'agax':1
-                },
-                beforeSend:function(){
-                    $('#load').show()
-                }
-                
-            }).done(function(response){
-                let comments = response.html
-
-                if(comments == ''){
-                    $('#load').text('no more comments')
-                    return
-                }
-
-                $('#more').append(comments)
-                $('#load').hide()
-            }) 
-        }
-
-        let page=1;
-        $(window).scroll(function () { 
-            if($(window).scrollTop()+$(window).height() >= $(document).height()){
-                page++
-                loadMore(page)
-            }
-        });
-        
-
-
-
-        //agax checkout 
-        let buy=$('#buy')
-        buy.on('click',function(e){
-            e.preventDefault();
-            $.ajax({
-            type    : "get",
-            url     : "{{url('items/get/checkout')}}",
-            data    : {
-                'price'  : "{{$item->price}}",
-                'item_id': "{{$item->id}}"
-            },
-            success: function (response,status) {
-                if(status == 'success'){
-                    buy.hide()
-                    $('#checkout').append(response.form)
-                }
-                
-            }
-        });
-        })
-        $
+      function loadMore(e){$.ajax({type:"get",url:"?page="+e,data:{agax:1},beforeSend:function(){$("#load").show()}}).done(function(e){let o=e.html;""!=o?($("#more").append(o),$("#load").hide()):$("#load").text("no more comments")})}let page=1;$(window).scroll(function(){$(window).scrollTop()+$(window).height()>=$(document).height()&&loadMore(++page)});let buy=$("#buy");buy.on("click",function(e){e.preventDefault(),$.ajax({type:"get",url:"{{url('items/get/checkout')}}",data:{price:"{{$item->price}}",item_id:"{{$item->id}}"},success:function(e,o){"success"==o&&(buy.hide(),$("#checkout").append(e.form))}})});
     </script>
 @endsection
 

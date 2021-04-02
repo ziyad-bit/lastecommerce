@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
 @section('header')
-    <title>{{ env('APP_NAME', 'items - ecommerce') }}</title>
-    <meta name="keywords" content="enjoy shopping, buy products by one click, you can find top brands at low prices">
+    <title>{{ env('APP_NAME', 'items - zikolaravelecommerce') }}</title>
+    <meta name="keywords" content="enjoy shopping, buy products by one click, you can find top brands at low prices in zikolaravelecommerce">
     <link href="{{ asset('css/users/items/show.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
 <h1 class="text-center">items</h1>
-
- <div class="row">
+<a class="btn btn-primary" style="margin-bottom: 15px" href="{{url('items/create')}}">add item</a>
+<div class="row">
     <div class="col-sm-3 ">
         
         <form method="POST" action="{{url('items/get')}}" id="filter_form">
@@ -84,7 +84,7 @@
 
     {{--   items      --}}
     <div id="more_items">
-        @include('users\items\allItems')
+        @include('users.items.allItems')
     </div>
 </div>
 
@@ -96,42 +96,6 @@
 @endsection
 @section('script')
     <script>
-        function loadMore(page){
-            let Items_request=new XMLHttpRequest();
-            Items_request.onreadystatechange=function(){
-                if(this.readyState == 4 && this.status == 200){
-                    let res=JSON.parse(this.responseText);
-                    let items=res.html;
-                    let load=document.getElementById('load');
-                    
-                    if(items == ''){
-                        load.textContent='no more items';
-                        return;
-                    }
-
-                    let more_items=document.getElementById('more_items');
-                    
-                    //more_items.insertAdjacentHTML('beforeend',items);
-                    more_items.innerHTML += items
-                    load.style.display='none';
-                }
-            }
-
-            let filter_form=document.getElementById('filter_form');
-            let formData=new FormData(filter_form);
-            formData.append('agax',1)
-
-            Items_request.open('post','?page='+page);
-            Items_request.send(formData)
-        }
-
-        let page=1
-        window.onscroll=function(){
-            if(window.scrollY+ window.innerHeight >= document.body.clientHeight){
-                document.getElementById('load').style.display='';
-                page++;
-                loadMore(page);
-            }
-        }
+      function loadMore(e){let t=new XMLHttpRequest;t.onreadystatechange=function(){if(4==this.readyState&&200==this.status){let e=JSON.parse(this.responseText).html,t=document.getElementById("load");if(""==e)return void(t.textContent="no more items");document.getElementById("more_items").innerHTML+=e,t.style.display="none"}};let n=document.getElementById("filter_form"),o=new FormData(n);o.append("agax",1),t.open("post","?page="+e),t.send(o)}let page=1;window.onscroll=function(){window.scrollY+window.innerHeight>=document.body.clientHeight&&(document.getElementById("load").style.display="",loadMore(++page))};
     </script>
 @endsection

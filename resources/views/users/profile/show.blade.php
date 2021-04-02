@@ -257,10 +257,324 @@
 
     {{-- ajax vanilla js requests --}}
 @section('script')
+    
     <script>
-$(function(){let e=$("#success");e.hide();let t=$("#save");t.hide(),$(".input").on("change",function(){t.show()}),$("#save").on("click",function(t){t.preventDefault(),$("#name_err").text(""),$("#email_err").text(""),$("#password_err").text(""),$.ajax({method:"post",url:"{{ route('update.profile') }}",data:{_token:"{{ csrf_token() }}",name:$("input[name='name']").val(),email:$("input[name='email']").val(),password:$("input[name='password']").val(),photo_id:0},success:function(t,i){"success"==i&&(e.show(),e.text(t.success),$(".user_name").text($("#input_name").val()),$("#email").text($("input[name='email']").val()))},error:function(t){e.hide();let i=$.parseJSON(t.responseText);$.each(i.errors,function(e,t){$("#"+e+"_err").text(t[0])})},cache:!1})});let i=$("#save_photo");i.hide(),$(".photo").on("change",function(){i.show()});let r=$("#success_photo");r.hide(),$("#save_photo").on("click",function(e){e.preventDefault(),$("#photo_err").text("");let t=new FormData($("#photoForm")[0]);t.append("id",1),$.ajax({method:"post",url:"{{ url('profile/update/photo') }}",data:t,enctype:"multipart/form-data",processData:!1,contentType:!1,cache:!1,success:function(e,t){"success"==t&&(r.show(),r.text(e.success),$(".image-profile").attr("src","/images/users/"+e.photo))},error:function(e){r.hide();let t=$.parseJSON(e.responseText);$.each(t.errors,function(e,t){$("#"+e+"_err").text(t[0])})}})}),$(".delete").on("click",function(){let e=$(this).attr("item_id");$("#delete_item").attr("itemId",e)});let a=$(".deleteMsg");$("#delete_item").on("click",function(e){e.preventDefault();let t=$(this).attr("itemId");$.ajax({method:"delete",url:"{{url('items/item/delete')}}",data:{_token:"{{ csrf_token() }}",id:t},success:function(e,t){"success"==t&&(a.show(),a.text(e.success),$(".item"+e.item_id).remove())},error:function(e){let t=$("#delete_error");t.text(e.responseJSON.error),t.show()}})}),$(".edit").on("click",function(){let e=$(this).attr("items_id");$("edit_item").attr("itemID",e),$.ajax({method:"get",url:"{{url('items/edit/item')}}",data:{id:e},success:function(e,t){if("success"==t){$("#edit_item").attr("itemID",e.item.id),$("#name").attr("value",e.item.name),$("#description").attr("value",e.item.description),$("#category").attr("value",e.item.category_id),$("#price").attr("value",e.item.price),$("#id ").attr("value",e.item.id),$("#filename ").attr("value",e.item.photo);let t=e.item.condition;"new"==t&&$("#new").attr("selected","selected"),"used"==t&&$("#used").attr("selected","selected");let i=e.item.category_id;$(".category"+i).attr("selected","selected")}}})});let o=$("#update");o.hide(),$("#update_item").on("click",function(e){e.preventDefault(),$(".photo_err").text(""),$(".name_err").text(""),$(".description_err").text(""),$(".price_err").text(""),$(".condition_err").text(""),$(".category_id_err").text("");let t=new FormData($("#update_form")[0]);t.append("photo_id",1),$.ajax({method:"post",url:"{{ url('items/update') }}",data:t,enctype:"multipart/form-data",processData:!1,contentType:!1,cache:!1,success:function(e,t){"success"==t&&(o.show(),o.text("you updated item successfully"),$(".item_image").attr("src","/images/items/"+e.item.photo),$("#item_status").text(e.item.condition),$("#item_price").text(e.item.price),$("#item_name").text(e.item.name))},error:function(e){o.hide();let t=$.parseJSON(e.responseText);$.each(t.errors,function(e,t){$("."+e+"_err").text(t[0])})}})})});
+/*
+        "use strict"
+        //ajax update profile
+        let success=document.getElementById('success');
+        success.style.display='none';
+        let save_btn=document.getElementById('save');
+        save_btn.disabled=true;
+        let input=document.getElementsByClassName('input')
+        input[0].onkeyup=function(){
+            if(input[0].value !== "{{Auth::user()->name}}"){
+                save_btn.disabled=false;
+                save_btn.className='btn btn-primary';
+            }else{
+                save_btn.disabled=true;
+                save_btn.className='btn btn-secondary';
+            }
+        }
+        input[1].onkeyup=function(){
+            if(input[1].value !== "{{Auth::user()->email}}"){
+                save_btn.disabled=false;
+                save_btn.className='btn btn-primary';
+            }else{
+                save_btn.disabled=true;
+                save_btn.className='btn btn-secondary';
+            }
+        }
+        let confirm=document.getElementById('confirm_err')
+            input[3].onkeyup=function(){
+                if(input[2].value == input[3].value){
+                    save_btn.disabled=false;
+                    save_btn.className='btn btn-primary';
+                    
+                    confirm.textContent=''
+                }else{
+                    save_btn.disabled=true;
+                    save_btn.className='btn btn-secondary';
+                    
+                    confirm.textContent="passwords don't match"
+                }
+            }
+        
+        let save_submit=document.getElementById('save');
+        save_submit.onclick=function(){
+            //validation
+            let name_err     = document.getElementById('name_err')
+            let email_err    = document.getElementById('email_err')
+            let password_err = document.getElementById('password_err')
+            
+            name_err.textContent     = '';
+            email_err.textContent    = '';
+            password_err.textContent = '';
+            
+            let input_name       = document.getElementById('input_name').value
+            let input_email      = document.getElementById('input_email').value
+            let input_password   = document.getElementById('input_password').value
+            let confirm_password = document.getElementById('confirm_password').value
+            
+            if(input_name.length < 3 ){
+                name_err.textContent='you should enter at least 3 characters'
+            }
+            if(input_email.length < 3 ){
+                email_err.textContent='you should enter at least 3 characters'
+            }else if(! input_email.includes('@') ){
+                email_err.textContent='invalid email'
+            }
+            if(input_password.length < 6 ){
+                password_err.textContent='you should enter at least 6 characters'
+            }
+            //ajax request
+            let update_request = new XMLHttpRequest();
+            update_request.onreadystatechange=function(){
+                if(this.readyState === 4 && this.status === 200){
+                    
+                    let res=JSON.parse(this.responseText);
+                    success.style.display = '';
+                    success.textContent   = res.success;
+                    let name        = document.getElementsByClassName('user_name')[0];
+                    let email       = document.getElementsByClassName('user_email')[0];
+                    
+                    name.textContent  = input_name;
+                    email.textContent = input_email;
+                }
+            }
+            
+            let data={
+                'name'            : input_name,
+                'email'           : input_email,
+                'password'        : input_password,
+                'confirm_password': confirm_password
+            }
+            update_request.open('post',"{{ route('update.profile') }}");
+            update_request.setRequestHeader('content-type','application/json');
+            update_request.setRequestHeader("X-CSRF-TOKEN", "{{ csrf_token() }}");
+            update_request.send( JSON.stringify(data));
+        }
+        //ajax update photo
+        let save_photo=document.getElementById('save_photo')
+        save_photo.onclick=function(){
+            let photo_request=new XMLHttpRequest();
+            photo_request.onreadystatechange=function(){
+                if(this.readyState == 4 && this.status == 200){
+                    let response =JSON.parse( this.responseText)
+                    let image=document.getElementsByClassName('image-profile')[0]
+                    
+                    image.src='/images/users/'+response.photo 
+                }
+            }
+            let photo_form=document.getElementById('photoForm')
+            let formData=new FormData(photo_form)
+            photo_request.open('post',"{{ url('profile/update/photo') }}");
+            photo_request.send( formData);
+        }
+*/
+        //ajax jquery requests 
+        $(function() {
+            
+            
+            // ajax update profile
+            let success=$('#success')
+            success.hide();
+            let save_btn=$('#save') 
+            save_btn.hide();
+            $('.input').on('change', function() {
+                save_btn.show();
+            })
+            $('#save').on('click', function(e) {
+                e.preventDefault();
+                $("#name_err").text('');
+                $("#email_err").text('');
+                $("#password_err").text('');
+                $.ajax({
+                    method: 'post',
+                    url   : "{{ route('update.profile') }}",
+                    data  : {
+                        "_token"  : "{{ csrf_token() }}",
+                        'name'    : $("input[name='name']").val(),
+                        'email'   : $("input[name='email']").val(),
+                        'password': $("input[name='password']").val(),
+                        'photo_id': 0
+                    },
+                    success: function(data, status) {
+                        if (status == 'success') {
+                            success.show();
+                            success.text(data.success)
+                            $('.user_name').text($("#input_name").val())
+                            $('#email').text($("input[name='email']").val())
+                        }
+                    },
+                    error: function(res) {
+                        success.hide();
+                        let response = $.parseJSON(res.responseText);
+                        $.each(response.errors, function(key, value) {
+                            $("#" + key + "_err").text(value[0]);
+                        })
+                    },
+                    cache: false
+                })
+            })
+            
+            // ajax update photo
+            let save=$('#save_photo')
+            save.hide();
+            $('.photo').on('change', function() {
+                save.show();
+            })
+            let successId=$('#success_photo');
+            successId.hide();
+            $('#save_photo').on('click', function(e) {
+                e.preventDefault();
+                $("#photo_err").text('');
+                let formData = new FormData($('#photoForm')[0]);
+                formData.append('id',1)
+                $.ajax({
+                    method     : "post",
+                    url        : "{{ url('profile/update/photo') }}",
+                    data       : formData,
+                    enctype    : 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    cache      : false,
+                    success    : function(data,status) {
+                        if (status == 'success') {
+                            successId.show();
+                            successId.text(data.success);
+                            $('.image-profile').attr('src',
+                            '/images/users/'+data.photo )
+                        }
+                    },
+                    error: function(res) {
+                        successId.hide();
+                        let response = $.parseJSON(res.responseText);
+                        $.each(response.errors, function(key, value) {
+                            $("#" + key + "_err").text(value[0]);
+                        })
+                    },
+                });
+            })
+            // ajax delete item
+            $('.delete').on('click',function(){
+                let item_id=$(this).attr('item_id');
+                $('#delete_item').attr('itemId',item_id);
+            })
+            
+            let delete_msg=$('.deleteMsg');
+            
+            $('#delete_item').on('click',function(e){
+                e.preventDefault();
+                
+                let itemId=$(this).attr('itemId');
+                $.ajax({
+                    method  : "delete",
+                    url     : "{{url('items/item/delete')}}",
+                    data    : {
+                        "_token": "{{ csrf_token() }}",
+                        'id'    : itemId
+                    },
+                    
+                    success : function (data,status) {
+                        if(status=='success'){
+                            delete_msg.show();
+                            delete_msg.text(data.success);
+                            
+                            $(".item" + data.item_id).remove();
+                        
+                        }
+                    },
+                    error:function(res){
+                        let error_id=$('#delete_error')
+                        error_id.text(res.responseJSON.error);
+                        error_id.show();
+                    }
+                });
+            })
+            // ajax edit item
+            $('.edit').on('click',function(){
+                let items_id=$(this).attr('items_id');
+                $('edit_item').attr('itemID',items_id);
+                $.ajax({
+                method: "get",
+                url   : "{{url('items/edit/item')}}",
+                data  : {
+                    'id': items_id
+                },
+                success: function (data,status) {
+                    if(status=='success'){
+                        $('#edit_item').attr('itemID',data.item.id)
+                        $('#name')       .attr('value', data.item.name);
+                        $('#description').attr('value', data.item.description);
+                        $('#category')   .attr('value', data.item.category_id);
+                        $('#price')      .attr('value', data.item.price);
+                        $('#id ')        .attr('value', data.item.id);
+                        $('#filename ')  .attr('value', data.item.photo);
 
+                        let condition= data.item.condition;
+                        if(condition=='new'){
+                            $('#new').attr('selected','selected');
+                        }
+                        if(condition=='used'){
+                            $('#used').attr('selected','selected');
+                        }
+                        let category_id=data.item.category_id;
+                        $('.category'+category_id).attr('selected','selected');
+                    }
+                },
+                
+            });
+            })
+            
+            //ajax update item
+            let successMsgs=$('#update');
+            successMsgs.hide();
+            $('#update_item').on('click', function(e) {
+                e.preventDefault();
+                $(".photo_err")      .text('');
+                $(".name_err")       .text('');
+                $(".description_err").text('');
+                $(".price_err")      .text('');
+                $(".condition_err")  .text('');
+                $(".category_id_err").text('');
+                
+                let formData = new FormData($('#update_form')[0]);
+                formData.append('photo_id',1);
+                $.ajax({
+                    method     : "post",
+                    url        : "{{ url('items/update') }}",
+                    data       : formData,
+                    enctype    : 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    cache      : false,
+                    success    : function(data,status) {
+                        if (status == 'success') {
+                            successMsgs.show();
+                            successMsgs.text('you updated item successfully');
+                            
+                            $('.item_image').attr('src',
+                            '/images/items/'+data.item.photo )
+
+                            $('#item_status').text( data.item.condition)
+                            $('#item_price') .text(data.item.price )
+                            $('#item_name')  .text(data.item.name )
+                        }
+                    },
+                    error: function(res) {
+                        successMsgs.hide();
+                        let response = $.parseJSON(res.responseText);
+                        $.each(response.errors, function(key, value) {
+                            $("." + key + "_err").text(value[0]);
+                        })
+                    },
+                });
+            })
+        })
     </script>
+
+    
 @endsection
 
 {{-- profile details --}}

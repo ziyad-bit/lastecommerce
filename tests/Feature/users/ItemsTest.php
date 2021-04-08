@@ -15,7 +15,7 @@ class ItemsTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private $user;
+    private $users;
     private $data;
 
     public function setup():void

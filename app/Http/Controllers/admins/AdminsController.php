@@ -19,7 +19,7 @@ class AdminsController extends Controller
         if(auth()->guard('admins')->attempt($credentials)){
             return Redirect::to('admins/dashboard');
         }else{
-            return redirect()->back()->with(['error'=>'incorrect password or email']);
+            return Redirect::to('admins/get/login')->with(['error'=>'incorrect password or email']);
         }
     }
 

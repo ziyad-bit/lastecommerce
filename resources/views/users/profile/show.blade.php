@@ -470,7 +470,7 @@
                 let itemId=$(this).attr('itemId');
                 $.ajax({
                     method  : "delete",
-                    url     : "{{url('items/item/delete')}}",
+                    url     : "{{url('items/delete')}}",
                     data    : {
                         "_token": "{{ csrf_token() }}",
                         'id'    : itemId
@@ -498,7 +498,7 @@
                 $('edit_item').attr('itemID',items_id);
                 $.ajax({
                 method: "get",
-                url   : "{{url('items/edit/item')}}",
+                url   : "{{url('items/edit')}}",
                 data  : {
                     'id': items_id
                 },

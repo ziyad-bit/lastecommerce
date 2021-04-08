@@ -68,7 +68,7 @@ class ItemsController extends Controller
                 'brand_id'    => $request->get('brand_id'),
             ]);
 
-            return redirect()->back()->with(['success' => 'you created item successfully']);
+            return Redirect::to('items/create')->with(['success' => 'you created item successfully']);
 
         } catch (\Exception $th) {
             return redirect()->back()->with(['error'=>'Something went wrong']);
@@ -171,7 +171,6 @@ class ItemsController extends Controller
     
             }
             
-            
             if ($request->has('agax')) {
                 $view = view('users.items.comments', compact('comments'))->render();
                 return response()->json(['html' => $view]);
@@ -255,6 +254,10 @@ class ItemsController extends Controller
         try {
             $item_id = $request->id;
             $item = Items::find($item_id);
+            if(! $item){
+                return response()->json(['error'=>'item not found'],404);
+            }
+
             $item->delete();
             $data = [
                 'success' => 'this item is deleted successfully',
@@ -272,8 +275,13 @@ class ItemsController extends Controller
     {
         try {
             $item = Items::find($request->id);
+            if(! $item){
+                return response()->json(['error'=>'item not found'],404);
+            }
+
             return response()->json(compact('item'));
-        } catch (\Throwable $th) {
+
+        } catch (\Exception $th) {
             return response()->json(['error'=>'something went wrong'],500);
         }
         
@@ -297,6 +305,10 @@ class ItemsController extends Controller
             $file_name   = filter_var($fileName                   ,FILTER_SANITIZE_STRING);
 
             $item              = Items::find($request->id);
+            if(! $item){
+                return response()->json(['error'=>'item not found'],404);
+            }
+
             $item->name        = $name;
             $item->description = $description;
             $item->condition   = $condition;
@@ -342,6 +354,10 @@ class ItemsController extends Controller
 
             $item_id      = $request->item_id;
             $item         = Items::find($item_id);
+            if(! $item){
+                return Redirect::to('orders/show')->with(['error'=>'item not found']);
+            }
+
             $item_rate    = $item->rate;
             $rate_count   = Review::where('item_id',$item_id)->count();
             $request_rate = $request->rate;
@@ -358,12 +374,16 @@ class ItemsController extends Controller
             ]);
 
             $order=Orders::find($request->order_id);
+            if(! $order){
+                return Redirect::to('orders/show')->with(['error'=>'order not found']);
+            }
+            
             $order->rating=1;
             $order->save();
 
             DB::commit();
 
-            return redirect()->back()->with(['success'=>'thank you for review']);
+            return Redirect::to('orders/show')->with(['success'=>'thank you for review']);
 
         } catch (\Exception $th) {
             DB::rollBack();

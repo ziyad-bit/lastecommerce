@@ -25,9 +25,9 @@ class ProfileRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'     => 'required_without:id|string|max:20|min:3',
-            'email'    => 'required_without:id|email|max:200|min:3|unique:users,email,' . Auth::user()->id,
-            'password' => 'required_without:id|string|max:20|min:6',
+            'name'     => 'required_without:id|string|max:50|min:3',
+            'email'    => 'required_without:id|email|max:50|min:7|unique:users,email,' . Auth::user()->id,
+            'password' => 'required_without:id|string|max:50|min:6',
             'photo'    => 'required_without:photo_id|image|mimes:jpg,gif,jpeg,png|max:14',
         ];
     }

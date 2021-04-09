@@ -128,7 +128,7 @@
                 agaxRequest.onreadystatechange=function(){
                     if(this.readyState == 4 && this.status == 200){
                         let res=JSON.parse(this.responseText);
-                        let notifications_count= res.notifications_not_readed_count;
+                        let notifications_count= res.notifs_not_read_count;
                         let notifs_count=document.getElementById('notification');
 
                         if(notifications_count != 0){
@@ -240,9 +240,9 @@
                     success:function(data,status){
                         
                         if(status=='success'){
-                            let unreaded_notifications_count= data.notifications_not_readed_count;
-                            if(unreaded_notifications_count != 0){
-                                $('#notification').text(unreaded_notifications_count);
+                            let unread_notifs_count= data.notifs_not_read_count;
+                            if(unread_notifs_count != 0){
+                                $('#notification').text(unread_notifs_count);
                                 
                             }
                             

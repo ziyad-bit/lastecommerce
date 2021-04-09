@@ -9,7 +9,6 @@ use App\User;
 use Tests\TestCase;
 use App\Models\Items;
 use App\Models\Orders;
-use App\Models\Review;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Session;

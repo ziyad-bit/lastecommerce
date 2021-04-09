@@ -41,7 +41,7 @@ class OrdersController extends Controller
     
             return redirect()->back()
                 ->with(['success'=>'you canceled order and 
-                you will recieve your money in 2 days ']);
+                you will recieve your money within 2 days ']);
                 
         } catch (\Exception $ex) {
             return Redirect::to('orders/show')->with(['error'=>'Something went wrong']);

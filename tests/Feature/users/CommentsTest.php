@@ -6,8 +6,6 @@ use App\Models\Comments;
 use App\Models\Items;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Session;
 use Tests\TestCase;
 
@@ -74,7 +72,7 @@ class CommentsTest extends TestCase
         $this->assertDatabaseHas('comment',['comment'=>$comment->comment]);
     }
 
-    #########################################     update      ##############################
+    #########################################     delete      ##############################
     public function test_delete()
     {
         $comment=factory(Comments::class)->create();

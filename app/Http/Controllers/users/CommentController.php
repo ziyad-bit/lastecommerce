@@ -19,7 +19,7 @@ class CommentController extends Controller
 ####################################      create          #################################
     public function create(CommentRequest $request,$id){
         try {
-            $comment     = filter_var($request->get('comment') , FILTER_SANITIZE_STRING);
+            $comment  = filter_var($request->get('comment') , FILTER_SANITIZE_STRING);
 
             Comments::create([
                 'comment'     => $comment,
@@ -54,17 +54,17 @@ class CommentController extends Controller
 ####################################      update          #################################
     public function update(CommentRequest $request,$id){
         try {
-            $comment=Comments::find($id);
-            if(! $comment){
+            $comments=Comments::find($id);
+            if(! $comments){
                 return redirect()->back()->with(['error'=>'no comment found']);
             }
 
             $comment  = filter_var($request->get('comment') , FILTER_SANITIZE_STRING);
 
-            $comment->comment  = $comment;
-            $comment->save();
+            $comments->comment = $comment;
+            $comments->save();
                 
-            return redirect()->back()->with(['success'=>'you updated comment successfully']);
+            return Redirect::to('comments/edit/'.$id)->with(['success'=>'you updated comment successfully']);
         } catch (\Exception $ex) {
             return redirect()->back()->with(['error'=>'something went wrong']);
         }

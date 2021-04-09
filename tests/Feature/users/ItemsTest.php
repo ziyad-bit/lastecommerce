@@ -2,10 +2,14 @@
 
 namespace Tests\Feature\users;
 
+use App\Models\Brands;
+use App\Models\Category;
 use App\Models\Comments;
 use App\User;
 use Tests\TestCase;
 use App\Models\Items;
+use App\Models\Orders;
+use App\Models\Review;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Session;
@@ -15,15 +19,22 @@ class ItemsTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private $users;
     private $data;
+    private $item;
+    private $category;
+    private $brand;
 
     public function setup():void
     {
         parent::setUp();
         Session::start();
 
-        $this->user=factory(User::class)->create();
+        $user           = factory(User::class)->create();
+        $this->item     = factory(Items::class)->create();
+        $this->category = factory(Category::class)->create();
+        $this->brand    = factory(Brands::class)->create();
+
+        $this->actingAs($user);
 
         $file=UploadedFile::fake()->image('avatar.jpg');
         $this->data=[
@@ -32,13 +43,13 @@ class ItemsTest extends TestCase
             'price'       => '1212',
             'condition'   => 'new',
             'description' => 'bad',
-            'category_id' => 1,
-            'brand_id'    => 1,
-            'users_id'    => 4,
+            'category_id' => $this->category->id,
+            'brand_id'    => $this->brand->id,
+            'users_id'    => $user->id,
             'photo'       => $file,
             'slug'        => 'apple',
             'date'        => now(),
-            'id'          => 30
+            'id'          => $this->item->id
         ];
         
     }
@@ -50,9 +61,6 @@ class ItemsTest extends TestCase
 #########################################      get create     ###########################    
     public function test_get_create()
     {
-        $user=$this->user;
-        $this->actingAs($user);
-
         $response=$this->get('items/create');
 
         $response->assertSee('condition');
@@ -62,9 +70,6 @@ class ItemsTest extends TestCase
 #########################################      post create     ###########################
     public function test_post_create()
     {
-        $user=$this->user;
-        $this->actingAs($user);
-
         $data=$this->data;
 
         $response=$this->post('items/post',$data);
@@ -78,8 +83,9 @@ class ItemsTest extends TestCase
     {
         for ($i=0; $i < 3 ; $i++) { 
             factory(Items::class)->create([
-                'name'=>'iphone '.$i,
-                'slug'=>'iphone '.$i
+                'name'     => 'iphone '.$i,
+                'slug'     => 'iphone '.$i,
+                'brand_id' => 1
             ]);
         }
 
@@ -99,12 +105,10 @@ class ItemsTest extends TestCase
 #########################################      get details     ###########################
     public function test_get_details()
     {
-        $user=$this->user;
-        $this->actingAs($user);
-
         for ($i=0; $i < 3 ; $i++) { 
             factory(Comments::class)->create([
                 'comment'=>'good '.$i,
+                'item_id'=>30
             ]);
         }
 
@@ -117,9 +121,6 @@ class ItemsTest extends TestCase
 #########################################      get checkout     #########################
     public function test_checkout()
     {
-        $user=$this->user;
-        $this->actingAs($user);
-
         $data=$this->data;
 
         $response=$this->call('GET','items/get/checkout',$data);
@@ -130,17 +131,16 @@ class ItemsTest extends TestCase
 #########################################      delete     ###############################
     public function test_delete()
     {
-        $user=$this->user;
-        $this->actingAs($user);
+        $item=$this->item;
 
         $data=[
             '_token' => csrf_token(),
-            'id'     => 30,
+            'id'     => $item->id,
         ];
 
         $response=$this->call('delete','items/delete',$data);
 
-        $this->assertDatabaseMissing('items',['id'=>30]);
+        $this->assertDatabaseMissing('items',['id'=>$item->id]);
         $response->assertJson(['success'=>true]);
     }
 
@@ -148,10 +148,9 @@ class ItemsTest extends TestCase
 #########################################      edit     ###############################
     public function test_edit()
     {
-        $user=$this->user;
-        $this->actingAs($user);
+        $item=$this->item;
 
-        $response=$this->call('get','items/edit',['id'=>30]);
+        $response=$this->call('get','items/edit',['id'=>$item->id]);
 
         $response->assertJson(['item'=>true]);
     }
@@ -159,9 +158,6 @@ class ItemsTest extends TestCase
 #########################################      update     ###############################
     public function test_update()
     {
-        $user=$this->user;
-        $this->actingAs($user);
-
         $data=$this->data;
         
         $response=$this->call('post','items/update',$data);
@@ -173,8 +169,10 @@ class ItemsTest extends TestCase
 #########################################      show results     ###############################
     public function test_show_results()
     {
+        $item=$this->item;
+
         $data=[
-            'search'=>'iphone 12',
+            'search'=>$item->name,
             '_token'=>csrf_token()
         ];
 
@@ -186,12 +184,12 @@ class ItemsTest extends TestCase
     #########################################      rate     ###############################
     public function test_rate()
     {
-        $user=$this->user;
-        $this->actingAs($user);
+        $order=factory(Orders::class)->create();
+        $item=$this->item;
 
         $data=[
-            'order_id' => 12,
-            'item_id'  => 30,
+            'order_id' => $order->id,
+            'item_id'  => $item->id,
             'rate'     => 4.5,
             '_token'   => csrf_token()
         ];

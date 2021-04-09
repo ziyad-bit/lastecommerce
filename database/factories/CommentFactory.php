@@ -4,12 +4,15 @@
 
 use App\Model;
 use App\Models\Comments;
+use App\Models\Items;
+use App\User;
 use Faker\Generator as Faker;
+
 
 $factory->define(Comments::class, function (Faker $faker) {
     return [ 
-        'comment' => $faker->name,
-        'item_id' => 30,
-        'user_id' => 4,
+        'comment' => $faker->word(),
+        'item_id' => factory(Items::class),
+        'user_id' => factory(User::class),
     ];
 });

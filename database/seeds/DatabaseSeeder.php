@@ -12,12 +12,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
+        /*DB::table('users')->insert([
             'name'     => 'ziyad',
             'email'    => 'ziyad199523@yahoo.com',
             'password' => Hash::make('ziyad12'),
         ]);
-        
+        */
+        //$this->call(CategorySeeder::class);
+        //$this->call(BrandSeeder::class);
+        //$this->call(UserSeeder::class);
+        $this->call(ItemSeeder::class);
+
 
         //$this->call(TestSeeder::class);
     }

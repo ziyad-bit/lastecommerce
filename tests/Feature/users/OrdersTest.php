@@ -19,7 +19,6 @@ class OrdersTest extends TestCase
 
         $this->user=factory(User::class)->create();
         $this->actingAs($this->user);
-
     }
     /**
      * A basic feature test example.

@@ -11,7 +11,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Comments::class, function (Faker $faker) {
     return [ 
-        'comment' => $faker->word(),
+        'comment' => $faker->paragraph(1),
         'item_id' => factory(Items::class),
         'user_id' => factory(User::class),
     ];

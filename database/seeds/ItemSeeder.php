@@ -16,12 +16,16 @@ class ItemSeeder extends Seeder
      */
     public function run()
     {
-        $faker=Factory::create();
+        $users      = User::where('id','<','4')->pluck('id')->toArray();
+        $brands     = Brands::where('id','<','4')->pluck('id')->toArray();
+        $categories = Category::where('id','<','4')->pluck('id')->toArray();
+
         for ($i=0; $i <10 ; $i++) { 
             factory(Items::class)->create([
-                'users_id'    => $faker->numberBetween(1,5),
-                'brand_id'    => $faker->numberBetween(1,5),
-                'category_id' => $faker->numberBetween(1,5)
+                'name'        => 'iphone '.$i,
+                'users_id'    => $users[array_rand($users)],
+                'brand_id'    => $brands[array_rand($brands)],
+                'category_id' => $categories[array_rand($categories)]
             ]);
         }
     }

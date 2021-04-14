@@ -3,19 +3,11 @@
 namespace App\Http\Controllers\users;
 
 use App\User;
-use App\Models\Items;
 use App\Models\Category;
 use App\Traits\UploadImage;
-use Illuminate\Http\Request;
-
-use App\Http\Requests\photoRequest;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\{Auth , Hash};
 use App\Http\Requests\ProfileRequest;
-use Illuminate\Support\Facades\Validator;
-
 
 class ProfileController extends Controller
 {
@@ -26,7 +18,8 @@ class ProfileController extends Controller
         $this->middleware(['auth:web', 'verified']);
     }
 ####################################      index          #################################
-    public function index(){
+    public function index()
+    {
         try {
             $user_items=User::find(Auth::user()->id)->items;
             $categories=Category::where('translation_lang',defaultLang())->get();
@@ -40,7 +33,8 @@ class ProfileController extends Controller
     }
 
 ####################################      update          #################################
-    public function update(ProfileRequest $request){
+    public function update(ProfileRequest $request)
+    {
         try {
             $user=User::find(Auth::user()->id);
 
@@ -62,7 +56,8 @@ class ProfileController extends Controller
     }
 
 ####################################      update photo          #################################
-    public function updatePhoto(ProfileRequest $request){
+    public function updatePhoto(ProfileRequest $request)
+    {
         try {
             $fileName=$this->uploadphoto($request,'images/users');
 

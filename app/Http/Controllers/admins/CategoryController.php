@@ -8,11 +8,11 @@ use DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 
-
 class CategoryController extends Controller
 {
     ##############################      index       #####################################
-    public function index(){
+    public function index()
+    {
         //autoload from app\helpers\general
         $defualt=defaultLang();
         $category=Category::where('translation_lang',$defualt)->selection()->get();
@@ -20,13 +20,15 @@ class CategoryController extends Controller
     }
 
     ##############################      create       #####################################
-    public function create(){
+    public function create()
+    {
         $language=Language::selection()->get();
         return view('admins.adminCategory.create',compact('language'));
     }
 
     ##############################      store        #####################################
-    public function store(CategoryRequest $request){
+    public function store(CategoryRequest $request)
+    {
         try{
             DB::beginTransaction();
 
@@ -79,7 +81,8 @@ class CategoryController extends Controller
     }
 
     ##############################      edit       #####################################
-    public function edit($id){
+    public function edit($id)
+    {
         $category=Category::with('categories')->selection()->find($id);
         if(! $category){
             return redirect()->back()->with(['error'=>"this category isn't found"]);
@@ -97,7 +100,8 @@ class CategoryController extends Controller
     }
 
     ##############################      update       #####################################
-    public function update($id,CategoryRequest $request){
+    public function update($id,CategoryRequest $request)
+    {
         $main_category=array_values($request->category)[0];
 
         $category=Category::selection()->find($id);
@@ -117,7 +121,8 @@ class CategoryController extends Controller
     }
 
     ##############################      delete       #####################################
-    public function delete($id){
+    public function delete($id)
+    {
         $category=Category::find($id)->categories->pluck('id')->toArray();
         array_push($category,$id);
         

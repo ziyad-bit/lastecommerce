@@ -3,13 +3,9 @@
 namespace App\Http\Controllers\users;
 
 use App\Models\Comments;
-
-use Illuminate\Http\Request;
 use App\Traits\Notifications;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-
 
 class NotificationsController extends Controller
 {
@@ -20,7 +16,8 @@ class NotificationsController extends Controller
         $this->middleware(['auth:web', 'verified']);
     }
 ####################################      show          #################################
-    public function show(){
+    public function show()
+    {
         try {
             $user_id         = Auth::user()->id;
             $items_id        = $this->auth_items_id();
@@ -40,7 +37,8 @@ class NotificationsController extends Controller
     }
 
 ####################################      update          #################################
-    public function update(){
+    public function update()
+    {
         try {
             $notifications_not_read = $this->notifications_not_read(Auth::user()->id);
             $comments_ids           = $notifications_not_read->pluck('id')->toArray();
@@ -58,5 +56,4 @@ class NotificationsController extends Controller
         
 
     }
-
 }

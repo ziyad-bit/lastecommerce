@@ -3,21 +3,13 @@
 namespace App\Http\Controllers\users;
 
 use DB;
-use App\Models\Items;
-use App\Models\Brands;
-use App\Models\Orders;
-use App\Models\Review;
-use App\Traits\Search;
-use App\Models\Category;
-use App\Models\Comments;
-use App\Traits\UploadImage;
+use App\Models\{Category , Comments , Brands , Orders , Items , Review};
+use App\Traits\{UploadImage , Search};
 use Illuminate\Http\Request;
 use App\Http\Requests\ItemRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\{Auth , Redirect};
 use Cviebrock\EloquentSluggable\Services\SlugService;
-
 
 class ItemsController extends Controller
 {
@@ -122,7 +114,7 @@ class ItemsController extends Controller
                 $items=Items::whereIn('brand_id',$selected_brands);
             }
 
-            $items = $items->orderBy('id','desc')->paginate(3);
+            $items = $items->orderBy('id','desc')->paginate(6);
 
             if ($request->has('agax')) {
                 $view = view('users.items.allItems', compact('items'))->render();
@@ -391,5 +383,4 @@ class ItemsController extends Controller
         }
         
     }
-
 }

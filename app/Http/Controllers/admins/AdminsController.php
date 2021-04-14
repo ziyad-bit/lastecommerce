@@ -31,5 +31,4 @@ class AdminsController extends Controller
         Auth::logout();
         return Redirect::to('admins/get/login');
     }
-    
 }

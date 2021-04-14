@@ -4,20 +4,18 @@ namespace App\Http\Controllers\users;
 
 use App\Models\Comments;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{Auth , Redirect};
 use App\Http\Requests\CommentRequest;
-use Illuminate\Support\Facades\Redirect;
-
 
 class CommentController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware(['auth:web','verified']);
     }
 ####################################      create          #################################
-    public function create(CommentRequest $request,$id){
+    public function create(CommentRequest $request,$id)
+    {
         try {
             $comment  = filter_var($request->get('comment') , FILTER_SANITIZE_STRING);
 
@@ -36,7 +34,8 @@ class CommentController extends Controller
     }
 
 ####################################      edit          #################################
-    public function edit($id){
+    public function edit($id)
+    {
         try {
             $comment=Comments::find($id);
             if(!$comment){
@@ -52,7 +51,8 @@ class CommentController extends Controller
     }
 
 ####################################      update          #################################
-    public function update(CommentRequest $request,$id){
+    public function update(CommentRequest $request,$id)
+    {
         try {
             $comments=Comments::find($id);
             if(! $comments){
@@ -71,9 +71,9 @@ class CommentController extends Controller
         
     }
 
-
 ####################################      delete          #################################
-    public function delete($id){
+    public function delete($id)
+    {
         try {
             $comment=Comments::find($id);
             if(! $comment){
@@ -88,5 +88,4 @@ class CommentController extends Controller
         }
         
     }
-
 }

@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Redirect;
 class CategoryController extends Controller
 {
     
-    public function index(){
+    public function index()
+    {
         try {
             $categories=Category::selection()->where('translation_lang',defaultLang())->get();
             return view('users.category.index',compact('categories'));
@@ -21,7 +22,8 @@ class CategoryController extends Controller
         
     }
 
-    public function show($id){
+    public function show($id)
+    {
         try {
             $category  = Category::find($id);
             if(! $category){

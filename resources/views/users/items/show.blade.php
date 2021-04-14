@@ -11,7 +11,7 @@
     <h1 class="text-center">items</h1>
     <a class="btn btn-primary" style="margin-bottom: 15px" href="{{ url('items/create') }}">add item</a>
     <div class="row">
-        <div class="col-sm-3 ">
+        <div class="col-sm-2 ">
 
             <form method="POST" action="{{ url('items/get') }}" id="filter_form">
                 @csrf
@@ -84,11 +84,14 @@
             </a>
         </div>
 
-
-        {{-- items --}}
-        <div id="more_items">
-            @include('users.items.allItems')
+        <div class="col-sm-10"  id="more_items">
+            
+            {{-- items --}}
+            
+                @include('users.items.allItems')
+            
         </div>
+        
     </div>
 
     <div id="load" style="margin-top: 30px" class="text-center" style="display: none">
@@ -107,13 +110,13 @@
                     let items=res.html;
                     let load=document.getElementById('load');
                     
-                    if(items == ''){
+                    if(items == "  "){
                         load.textContent='no more items';
                         return;
                     }
                     
                     let more_items=document.getElementById('more_items');
-                    more_items.insertAdjacentHTML('afterend',items);
+                    more_items.insertAdjacentHTML('beforeend',items);
                     load.style.display='none';
                 }
             }

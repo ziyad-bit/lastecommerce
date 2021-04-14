@@ -13,7 +13,7 @@ trait Notifications
         return $items_id;
     }
     
-    public function notifications_not_read($user_id)
+    public function notifications_not_read(int $user_id)
     {
         $items_id               = $this->auth_items_id();
         $notifications_not_read = Comments::whereIn('item_id',$items_id)

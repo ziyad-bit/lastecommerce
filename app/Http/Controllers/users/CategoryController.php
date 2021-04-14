@@ -22,7 +22,7 @@ class CategoryController extends Controller
         
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         try {
             $category  = Category::find($id);

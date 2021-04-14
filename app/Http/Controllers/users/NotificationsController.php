@@ -53,7 +53,5 @@ class NotificationsController extends Controller
         } catch (\Exception $th) {
             return response()->json(['error'=>'something went wrong'],500);
         }
-        
-
     }
 }

@@ -81,7 +81,7 @@ class CategoryController extends Controller
     }
 
     ##############################      edit       #####################################
-    public function edit($id)
+    public function edit(int $id)
     {
         $category=Category::with('categories')->selection()->find($id);
         if(! $category){
@@ -100,7 +100,7 @@ class CategoryController extends Controller
     }
 
     ##############################      update       #####################################
-    public function update($id,CategoryRequest $request)
+    public function update(int $id,CategoryRequest $request)
     {
         $main_category=array_values($request->category)[0];
 
@@ -121,7 +121,7 @@ class CategoryController extends Controller
     }
 
     ##############################      delete       #####################################
-    public function delete($id)
+    public function delete(int $id)
     {
         $category=Category::find($id)->categories->pluck('id')->toArray();
         array_push($category,$id);

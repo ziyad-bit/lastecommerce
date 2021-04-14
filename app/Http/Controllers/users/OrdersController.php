@@ -29,7 +29,7 @@ class OrdersController extends Controller
     }
 
 ####################################      delete          #################################
-    public function delete($id)
+    public function delete(int $id)
     {
         try {
             $order=Orders::find($id);

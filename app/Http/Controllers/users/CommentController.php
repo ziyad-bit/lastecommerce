@@ -14,7 +14,7 @@ class CommentController extends Controller
         $this->middleware(['auth:web','verified']);
     }
 ####################################      create          #################################
-    public function create(CommentRequest $request,$id)
+    public function create(CommentRequest $request, int $id)
     {
         try {
             $comment  = filter_var($request->get('comment') , FILTER_SANITIZE_STRING);
@@ -34,7 +34,7 @@ class CommentController extends Controller
     }
 
 ####################################      edit          #################################
-    public function edit($id)
+    public function edit(int $id)
     {
         try {
             $comment=Comments::find($id);
@@ -51,7 +51,7 @@ class CommentController extends Controller
     }
 
 ####################################      update          #################################
-    public function update(CommentRequest $request,$id)
+    public function update(CommentRequest $request,int $id)
     {
         try {
             $comments=Comments::find($id);
@@ -72,7 +72,7 @@ class CommentController extends Controller
     }
 
 ####################################      delete          #################################
-    public function delete($id)
+    public function delete(int $id)
     {
         try {
             $comment=Comments::find($id);

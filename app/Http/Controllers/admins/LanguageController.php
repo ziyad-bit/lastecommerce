@@ -17,7 +17,6 @@ class LanguageController extends Controller
 
     public function create()
     {
-        
         return view('admins.language.create');
     }
 

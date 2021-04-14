@@ -131,7 +131,7 @@ class ItemsController extends Controller
     }
 
 #########################################      show item details      ####################################
-    public function showDetails($slug, Request $request)
+    public function showDetails(string $slug, Request $request)
     {
         try {
             $item    = Items::where('slug',$slug)->first();
@@ -177,7 +177,7 @@ class ItemsController extends Controller
     }
 
 #########################################       payment status      ####################################
-    public function getPaymentStatus($id,$resourcePath)
+    public function getPaymentStatus($id,string $resourcePath)
     {
         try {
             $url = "https://test.oppwa.com/";
